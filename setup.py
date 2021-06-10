@@ -29,6 +29,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
     ],
     description="Stable Matching is a powerful theory that can make a lot of useful stuff. SMUP uses it to make useless, but sometimes nice, random pictures.",
     install_requires=requirements,

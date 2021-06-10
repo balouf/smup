@@ -31,7 +31,14 @@ import smup
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx.ext.napoleon', 'sphinx.ext.githubpages']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx.ext.napoleon', 'sphinx.ext.githubpages',
+              'sphinx.ext.intersphinx', 'nbsphinx', 'IPython.sphinxext.ipython_console_highlighting', ]
+
+# Add the possibility to access python documentation.
+intersphinx_mapping = {'python':('https://docs.python.org/3', None),
+                       'numpy': ('https://docs.scipy.org/doc/numpy/', None),
+                       'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
+                       'matplotlib': ('http://matplotlib.sourceforge.net/', None)}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
