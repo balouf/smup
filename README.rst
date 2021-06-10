@@ -33,7 +33,7 @@ Stable Matching is a powerful theory that can make a lot of useful stuff. SMUP u
 Features
 --------
 
-* TODO
+* Draw random colorful pictures.
 
 -------
 Credits
