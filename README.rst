@@ -35,6 +35,8 @@ Features
 
 * Draw random colorful pictures based on b-matching theory.
 
+* And that's it!
+
 -------
 Credits
 -------
