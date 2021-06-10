@@ -2,6 +2,7 @@ import numpy as np
 from numba import njit
 from matplotlib import pyplot as plt
 import logging
+from pathlib import Path
 
 
 @njit
@@ -341,6 +342,22 @@ class Smup:
         Returns
         -------
         None
+
+        Examples
+        --------
+
+        See usage for graphical examples. Here we just show the file saving feature.
+
+        >>> from pathlib import Path
+        >>> import tempfile
+        >>> matcher = Smup()
+        >>> matcher.compute(x=30, y=20, s=3, norm=2, seed=42)
+        >>> with tempfile.TemporaryDirectory() as tmpdirname:
+        ...     fn = tmpdirname/Path("picture.png")
+        ...     matcher.display(save=fn)
+        ...     size=fn.stat().st_size
+        >>> size
+        55984
         """
         plt.figure(figsize=(40, 30))
         img = plt.imshow(self.picture / self.s)
@@ -350,6 +367,6 @@ class Smup:
             plt.plot(self.centers[0, :], self.centers[1, :], 'k.', markersize=center_size)
         plt.xticks([], [])
         plt.yticks([], [])
-        if save and isinstance(save, str):
+        if save and (isinstance(save, str) or isinstance(save, Path)) :
             plt.savefig(save, bbox_inches='tight')
-        plt.show()
+        # plt.show()
