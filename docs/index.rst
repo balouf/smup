@@ -7,7 +7,7 @@ Welcome to Stable-Matching Useless Pictures's documentation!
 
    readme
    installation
-   usage
+   use
    reference/index
    contributing
    authors
