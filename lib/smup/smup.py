@@ -187,6 +187,7 @@ class Smup:
     and
     :py:meth:`~smup.smup.Smup.display`.
     """
+
     def __init__(self):
         self.s = None
         self.picture = None
@@ -346,7 +347,7 @@ class Smup:
         Examples
         --------
 
-        See usage for graphical examples. Here we just show the file saving feature.
+        See :doc:`/use` for graphical examples. Here we just show the file saving feature.
 
         >>> from pathlib import Path
         >>> import tempfile
@@ -367,6 +368,5 @@ class Smup:
             plt.plot(self.centers[0, :], self.centers[1, :], 'k.', markersize=center_size)
         plt.xticks([], [])
         plt.yticks([], [])
-        if save and (isinstance(save, str) or isinstance(save, Path)) :
+        if save and (isinstance(save, str) or isinstance(save, Path)):
             plt.savefig(save, bbox_inches='tight')
-        # plt.show()
