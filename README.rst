@@ -1,3 +1,8 @@
+.. image:: https://github.com/balouf/smup/raw/master/docs/logo.png
+    :alt: SMUP logo
+    :target: https://balouf.github.io/smup/
+
+
 ================================
 Stable-Matching Useless Pictures
 ================================

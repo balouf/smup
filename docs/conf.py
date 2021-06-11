@@ -52,6 +52,14 @@ source_suffix = '.rst'
 # Favicon
 html_favicon = 'favicon.ico'
 
+# Logo
+html_logo = "logo-small.png"
+
+# html_theme_options = {
+#     'logo_only': True,
+# }
+
+
 # The master toctree document.
 master_doc = 'index'
 
