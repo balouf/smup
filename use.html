@@ -103,7 +103,21 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="readme.html">Stable-Matching Useless Pictures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Using SMUP</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using SMUP</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Computational-parameters">Computational parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Norm">Norm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Size">Size</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Number-of-areas">Number of areas</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Display-parameters">Display parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Colormap">Colormap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Centers">Centers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Saving">Saving</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="reference/index.html">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Credits</a></li>
@@ -447,22 +461,14 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Using-SMUP">
 <h1>Using SMUP<a class="headerlink" href="#Using-SMUP" title="Permalink to this headline">¶</a></h1>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">smup</span> <span class="kn">import</span> <span class="n">Smup</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">matcher</span> <span class="o">=</span> <span class="n">Smup</span><span class="p">()</span>
-<span class="n">matcher</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">matcher</span> <span class="o">=</span> <span class="n">Smup</span><span class="p">()</span>
+<span class="n">matcher</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 <span class="n">matcher</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -471,34 +477,19 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_2_0.png" src="_images/use_2_0.png" />
+<img alt="_images/use_1_0.png" src="_images/use_1_0.png" />
 </div>
 </div>
+<div class="section" id="Computational-parameters">
+<h2>Computational parameters<a class="headerlink" href="#Computational-parameters" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="Norm">
+<h3>Norm<a class="headerlink" href="#Norm" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">matcher</span> <span class="o">=</span> <span class="n">Smup</span><span class="p">()</span>
-<span class="n">matcher</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="n">matcher</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/use_3_0.png" src="_images/use_3_0.png" />
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">matcher</span> <span class="o">=</span> <span class="n">Smup</span><span class="p">()</span>
-<span class="n">matcher</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="s2">&quot;inf&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span></span><span class="n">matcher</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 <span class="n">matcher</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -508,6 +499,193 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <img alt="_images/use_4_0.png" src="_images/use_4_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">matcher</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">matcher</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/use_5_0.png" src="_images/use_5_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">matcher</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="s2">&quot;inf&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">matcher</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/use_6_0.png" src="_images/use_6_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Size">
+<h3>Size<a class="headerlink" href="#Size" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">matcher</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span>
+<span class="n">matcher</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/use_8_0.png" src="_images/use_8_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">matcher</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">matcher</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/use_9_0.png" src="_images/use_9_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Number-of-areas">
+<h3>Number of areas<a class="headerlink" href="#Number-of-areas" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">matcher</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">matcher</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/use_11_0.png" src="_images/use_11_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">matcher</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">matcher</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/use_12_0.png" src="_images/use_12_0.png" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="Display-parameters">
+<h2>Display parameters<a class="headerlink" href="#Display-parameters" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="Colormap">
+<h3>Colormap<a class="headerlink" href="#Colormap" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">matcher</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;spring&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/use_15_0.png" src="_images/use_15_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">matcher</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;autumn&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/use_16_0.png" src="_images/use_16_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Centers">
+<h3>Centers<a class="headerlink" href="#Centers" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">matcher</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">draw_centers</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/use_18_0.png" src="_images/use_18_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">matcher</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">center_size</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/use_19_0.png" src="_images/use_19_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Saving">
+<h3>Saving<a class="headerlink" href="#Saving" title="Permalink to this headline">¶</a></h3>
+<p>To save the picture, just feed the <code class="docutils literal notranslate"><span class="pre">save</span></code> parameter with filename. Cf <a class="reference external" href="https://balouf.github.io/smup/reference/index.html#smup.smup.Smup.display">https://balouf.github.io/smup/reference/index.html#smup.smup.Smup.display</a></p>
 </div>
 </div>
 </div>
