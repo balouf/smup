@@ -23,6 +23,8 @@ def dist_2(center, points):
     Examples
     --------
 
+    Square distances between the origin and the points (0.3, 0.4), (1, 0), and (2, 1):
+
     >>> center = np.array([0, 0])
     >>> points = np.array([ [0.3, 1, 2], [0.4, 0, 1] ])
     >>> dist_2(center, points)
@@ -49,6 +51,8 @@ def dist_1(center, points):
     Examples
     --------
 
+    Manhattan distances between the origin and the points (0.3, 0.4), (1, 0), and (2, 1):
+
     >>> center = np.array([0, 0])
     >>> points = np.array([ [0.3, 1, 2], [0.4, 0, 1] ])
     >>> dist_1(center, points)
@@ -74,6 +78,8 @@ def dist_inf(center, points):
 
     Examples
     --------
+
+    Inf-norm distances between the origin and the points (0.3, 0.4), (1, 0), and (2, 1):
 
     >>> center = np.array([0, 0])
     >>> points = np.array([ [0.3, 1, 2], [0.4, 0, 1] ])
@@ -215,9 +221,13 @@ class Smup:
         Examples
         --------
 
-        >>> matcher = Smup()
-        >>> matcher.compute(x=30, y=20, s=3, norm=2, seed=42)
-        >>> txt = ascii_display(matcher.picture, matcher.centers)
+        We will use ASCII display for these examples. With the chosen seen, the site `0` should be a `ball`.
+
+        With Euclidian distance, the ball is a disk.
+
+        >>> my_smup = Smup()
+        >>> my_smup.compute(x=30, y=20, s=3, norm=2, seed=42)
+        >>> txt = ascii_display(my_smup.picture, my_smup.centers)
         >>> print(txt) # doctest: +SKIP
         1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
         1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
@@ -240,8 +250,10 @@ class Smup:
         1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 1 1 1 1 1
         1 1 1 1 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 2 2 2 2 2 1 1 1 1 1 1
 
-        >>> matcher.compute(x=30, y=20, s=3, norm=1, seed=42)
-        >>> txt = ascii_display(matcher.picture, matcher.centers)
+        With Manhattan distance, the ball is a diamond.
+
+        >>> my_smup.compute(x=30, y=20, s=3, norm=1, seed=42)
+        >>> txt = ascii_display(my_smup.picture, my_smup.centers)
         >>> print(txt) # doctest: +SKIP
         1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
         1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
@@ -264,8 +276,10 @@ class Smup:
         1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 1 1 1 2 2 2 2 2 2 2 1 1 1 1 1
         1 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1 1 1 2 2 2 2 2 2 1 1 1 1 1
 
-        >>> matcher.compute(x=30, y=20, s=3, norm="inf", seed=42)
-        >>> txt = ascii_display(matcher.picture, matcher.centers)
+        With Inf-norm distance, the ball is a (partial) square.
+
+        >>> my_smup.compute(x=30, y=20, s=3, norm="inf", seed=42)
+        >>> txt = ascii_display(my_smup.picture, my_smup.centers)
         >>> print(txt) # doctest: +SKIP
         1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
         1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
@@ -290,8 +304,8 @@ class Smup:
 
         Unclear norm defaults to Euclidian norm (and a warning is issued).
 
-        >>> matcher.compute(x=30, y=20, s=3, norm="??", seed=42)
-        >>> txt = ascii_display(matcher.picture, matcher.centers)
+        >>> my_smup.compute(x=30, y=20, s=3, norm="??", seed=42)
+        >>> txt = ascii_display(my_smup.picture, my_smup.centers)
         >>> print(txt) # doctest: +SKIP
         1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
         1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
@@ -351,11 +365,11 @@ class Smup:
 
         >>> from pathlib import Path
         >>> import tempfile
-        >>> matcher = Smup()
-        >>> matcher.compute(x=30, y=20, s=3, norm=2, seed=42)
+        >>> my_smup = Smup()
+        >>> my_smup.compute(x=30, y=20, s=3, norm=2, seed=42)
         >>> with tempfile.TemporaryDirectory() as tmpdirname:
         ...     fn = tmpdirname/Path("picture.png")
-        ...     matcher.display(save=fn)
+        ...     my_smup.display(save=fn)
         ...     size=fn.stat().st_size
         >>> size
         55984

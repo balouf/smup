@@ -195,6 +195,8 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 
+<span class="sd">    Square distances between the origin and the points (0.3, 0.4), (1, 0), and (2, 1):</span>
+
 <span class="sd">    &gt;&gt;&gt; center = np.array([0, 0])</span>
 <span class="sd">    &gt;&gt;&gt; points = np.array([ [0.3, 1, 2], [0.4, 0, 1] ])</span>
 <span class="sd">    &gt;&gt;&gt; dist_2(center, points)</span>
@@ -221,6 +223,8 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 
+<span class="sd">    Manhattan distances between the origin and the points (0.3, 0.4), (1, 0), and (2, 1):</span>
+
 <span class="sd">    &gt;&gt;&gt; center = np.array([0, 0])</span>
 <span class="sd">    &gt;&gt;&gt; points = np.array([ [0.3, 1, 2], [0.4, 0, 1] ])</span>
 <span class="sd">    &gt;&gt;&gt; dist_1(center, points)</span>
@@ -246,6 +250,8 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
+
+<span class="sd">    Inf-norm distances between the origin and the points (0.3, 0.4), (1, 0), and (2, 1):</span>
 
 <span class="sd">    &gt;&gt;&gt; center = np.array([0, 0])</span>
 <span class="sd">    &gt;&gt;&gt; points = np.array([ [0.3, 1, 2], [0.4, 0, 1] ])</span>
@@ -387,9 +393,13 @@
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 
-<span class="sd">        &gt;&gt;&gt; matcher = Smup()</span>
-<span class="sd">        &gt;&gt;&gt; matcher.compute(x=30, y=20, s=3, norm=2, seed=42)</span>
-<span class="sd">        &gt;&gt;&gt; txt = ascii_display(matcher.picture, matcher.centers)</span>
+<span class="sd">        We will use ASCII display for these examples. With the chosen seen, the site `0` should be a `ball`.</span>
+
+<span class="sd">        With Euclidian distance, the ball is a disk.</span>
+
+<span class="sd">        &gt;&gt;&gt; my_smup = Smup()</span>
+<span class="sd">        &gt;&gt;&gt; my_smup.compute(x=30, y=20, s=3, norm=2, seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; txt = ascii_display(my_smup.picture, my_smup.centers)</span>
 <span class="sd">        &gt;&gt;&gt; print(txt) # doctest: +SKIP</span>
 <span class="sd">        1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
 <span class="sd">        1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
@@ -412,8 +422,10 @@
 <span class="sd">        1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
 <span class="sd">        1 1 1 1 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 2 2 2 2 2 1 1 1 1 1 1</span>
 
-<span class="sd">        &gt;&gt;&gt; matcher.compute(x=30, y=20, s=3, norm=1, seed=42)</span>
-<span class="sd">        &gt;&gt;&gt; txt = ascii_display(matcher.picture, matcher.centers)</span>
+<span class="sd">        With Manhattan distance, the ball is a diamond.</span>
+
+<span class="sd">        &gt;&gt;&gt; my_smup.compute(x=30, y=20, s=3, norm=1, seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; txt = ascii_display(my_smup.picture, my_smup.centers)</span>
 <span class="sd">        &gt;&gt;&gt; print(txt) # doctest: +SKIP</span>
 <span class="sd">        1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
 <span class="sd">        1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
@@ -436,8 +448,10 @@
 <span class="sd">        1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 1 1 1 2 2 2 2 2 2 2 1 1 1 1 1</span>
 <span class="sd">        1 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1 1 1 2 2 2 2 2 2 1 1 1 1 1</span>
 
-<span class="sd">        &gt;&gt;&gt; matcher.compute(x=30, y=20, s=3, norm=&quot;inf&quot;, seed=42)</span>
-<span class="sd">        &gt;&gt;&gt; txt = ascii_display(matcher.picture, matcher.centers)</span>
+<span class="sd">        With Inf-norm distance, the ball is a (partial) square.</span>
+
+<span class="sd">        &gt;&gt;&gt; my_smup.compute(x=30, y=20, s=3, norm=&quot;inf&quot;, seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; txt = ascii_display(my_smup.picture, my_smup.centers)</span>
 <span class="sd">        &gt;&gt;&gt; print(txt) # doctest: +SKIP</span>
 <span class="sd">        1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
 <span class="sd">        1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
@@ -462,8 +476,8 @@
 
 <span class="sd">        Unclear norm defaults to Euclidian norm (and a warning is issued).</span>
 
-<span class="sd">        &gt;&gt;&gt; matcher.compute(x=30, y=20, s=3, norm=&quot;??&quot;, seed=42)</span>
-<span class="sd">        &gt;&gt;&gt; txt = ascii_display(matcher.picture, matcher.centers)</span>
+<span class="sd">        &gt;&gt;&gt; my_smup.compute(x=30, y=20, s=3, norm=&quot;??&quot;, seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; txt = ascii_display(my_smup.picture, my_smup.centers)</span>
 <span class="sd">        &gt;&gt;&gt; print(txt) # doctest: +SKIP</span>
 <span class="sd">        1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
 <span class="sd">        1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
@@ -523,11 +537,11 @@
 
 <span class="sd">        &gt;&gt;&gt; from pathlib import Path</span>
 <span class="sd">        &gt;&gt;&gt; import tempfile</span>
-<span class="sd">        &gt;&gt;&gt; matcher = Smup()</span>
-<span class="sd">        &gt;&gt;&gt; matcher.compute(x=30, y=20, s=3, norm=2, seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; my_smup = Smup()</span>
+<span class="sd">        &gt;&gt;&gt; my_smup.compute(x=30, y=20, s=3, norm=2, seed=42)</span>
 <span class="sd">        &gt;&gt;&gt; with tempfile.TemporaryDirectory() as tmpdirname:</span>
 <span class="sd">        ...     fn = tmpdirname/Path(&quot;picture.png&quot;)</span>
-<span class="sd">        ...     matcher.display(save=fn)</span>
+<span class="sd">        ...     my_smup.display(save=fn)</span>
 <span class="sd">        ...     size=fn.stat().st_size</span>
 <span class="sd">        &gt;&gt;&gt; size</span>
 <span class="sd">        55984</span>
