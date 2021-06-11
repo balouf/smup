@@ -5,9 +5,6 @@ name: build
 
 on: [push]
 
-env:
-  NUMBA_DISABLE_JIT: 1
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -39,7 +36,6 @@ jobs:
 
     - name: Run tests with tox
       run: |
-        export NUMBA_DISABLE_JIT=1
         tox -e py
 
     - name: Upload coverage to Codecov
