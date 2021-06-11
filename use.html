@@ -116,6 +116,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#Saving">Saving</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#Theory">Theory</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="reference/index.html">Reference</a></li>
@@ -461,7 +462,11 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Using-SMUP">
 <h1>Using SMUP<a class="headerlink" href="#Using-SMUP" title="Permalink to this headline">¶</a></h1>
-<p>You use the <code class="docutils literal notranslate"><span class="pre">Smup</span></code> class to produce <em>smups</em> (<em>S</em>table <em>M</em>atchings <em>U</em>seless <em>P</em>ictures). A smup is built in two steps: - A <em>compute</em> phase generates the topology of the smup; - A <em>display</em> phase handles the actual drawing/saving.</p>
+<p>You use the <code class="docutils literal notranslate"><span class="pre">Smup</span></code> class to produce <em>smups</em> (<em>S</em>table <em>M</em>atchings <em>U</em>seless <em>P</em>ictures). A smup is built in two steps:</p>
+<ul class="simple">
+<li><p>A <em>compute</em> phase generates the topology of the smup;</p></li>
+<li><p>A <em>display</em> phase handles the actual drawing/saving.</p></li>
+</ul>
 <p>The following is a minimal code to produce a smup.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -484,7 +489,12 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="section" id="Computational-parameters">
 <h2>Computational parameters<a class="headerlink" href="#Computational-parameters" title="Permalink to this headline">¶</a></h2>
-<p>For computing, you can adjust: - the distance used; - the size of the picture; - the number of sites.</p>
+<p>For computing, you can adjust:</p>
+<ul class="simple">
+<li><p>the distance used;</p></li>
+<li><p>the size of the picture;</p></li>
+<li><p>the number of sites.</p></li>
+</ul>
 <div class="section" id="Norm">
 <h3>Norm<a class="headerlink" href="#Norm" title="Permalink to this headline">¶</a></h3>
 <p>By default, the smup will use the Euclidian distance (norm 2), which will shape the sites as (partial) circles. Note the use of a random seed in the code below, which will allows to fix the location of the sites and see the effect of the norm.</p>
@@ -716,6 +726,17 @@ div.rendered_html tbody tr:hover {
 <h3>Saving<a class="headerlink" href="#Saving" title="Permalink to this headline">¶</a></h3>
 <p>To save the picture, just feed the <code class="docutils literal notranslate"><span class="pre">save</span></code> parameter with filename. Cf <a class="reference external" href="https://balouf.github.io/smup/reference/index.html#smup.smup.Smup.display">https://balouf.github.io/smup/reference/index.html#smup.smup.Smup.display</a></p>
 </div>
+</div>
+<div class="section" id="Theory">
+<h2>Theory<a class="headerlink" href="#Theory" title="Permalink to this headline">¶</a></h2>
+<p>A smup is just a <span class="math notranslate nohighlight">\(b\)</span>-matching between a set of centers drawn randomly at random and the pixels of the picture, with distances used as preferences. Funny thing with distance-based preferences is that they tend to follow a power-law distribution, which means that while most of the pixels will be attached close to their center, some pixels are exiled far away, possibly to the other end of the picture. Another funny thing is that if you run the propose/dispose algorithm by increasing distance,
+there is no rejection after acceptance, which allows to fasten the algorithm a bit.</p>
+<p>The paragraph above doesn’t mean anything to you? Don’t panic, here are a few pointers:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.eecs.harvard.edu/cs286r/courses/fall09/papers/galeshapley.pdf">College Admissions and the Stability of Marriage</a>, the original article on stable matchings.</p></li>
+<li><p><a class="reference external" href="https://arxiv.org/pdf/math/0505668.pdf">A Stable Marriage of Poisson and Lebesgue</a>, a mathematical approach to smups.</p></li>
+<li><p><a class="reference external" href="https://ieeexplore.ieee.org/document/5062060">The Stable Configuration of Acyclic Preference-Based Systems</a>, my own (useless?) research on the topic.</p></li>
+</ul>
 </div>
 </div>
 
