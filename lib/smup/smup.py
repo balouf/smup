@@ -218,7 +218,7 @@ class Smup:
         >>> matcher = Smup()
         >>> matcher.compute(x=30, y=20, s=3, norm=2, seed=42)
         >>> txt = ascii_display(matcher.picture, matcher.centers)
-        >>> print(txt)
+        >>> print(txt) # doctest: +SKIP
         1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
         1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
         1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
@@ -242,7 +242,7 @@ class Smup:
 
         >>> matcher.compute(x=30, y=20, s=3, norm=1, seed=42)
         >>> txt = ascii_display(matcher.picture, matcher.centers)
-        >>> print(txt)
+        >>> print(txt) # doctest: +SKIP
         1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
         1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
         1 1 1 2 2 2 2 2 2 2 2 0 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
@@ -266,7 +266,7 @@ class Smup:
 
         >>> matcher.compute(x=30, y=20, s=3, norm="inf", seed=42)
         >>> txt = ascii_display(matcher.picture, matcher.centers)
-        >>> print(txt)
+        >>> print(txt) # doctest: +SKIP
         1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
         1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
         1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
@@ -292,7 +292,7 @@ class Smup:
 
         >>> matcher.compute(x=30, y=20, s=3, norm="??", seed=42)
         >>> txt = ascii_display(matcher.picture, matcher.centers)
-        >>> print(txt)
+        >>> print(txt) # doctest: +SKIP
         1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
         1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
         1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
