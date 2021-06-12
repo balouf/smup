@@ -137,7 +137,7 @@ def compute(x, y, s, distance_function, seed=None):
     Returns
     -------
     picture: :class:`~numpy.ndarray`
-        A xXy array populated with s distinct floats in [0, 1] that hints the area of each pixel
+        A xXy array populated with integers 0, ..., s-1 that indicate the area of each pixel
     centers: :class:`~numpy.ndarray`
         Coordinates of the area centers
     """
