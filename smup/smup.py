@@ -94,7 +94,8 @@ def ascii_display(picture, centers):
     Parameters
     ----------
     picture: :class:`~numpy.ndarray`
-        A xXy array populated with s distinct floats in [0, 1] that hints the area of each pixel
+        A xXy array populated with integers 0, ..., s-1 that indicate the area of each pixel.
+        Non covered pixels, if any, are represented by s.
     centers: :class:`~numpy.ndarray`
         Coordinates of the area centers
 
@@ -141,7 +142,8 @@ def compute(x, y, s, distance_function, provisioning=1.0, heterogeneous_areas=Fa
     Returns
     -------
     picture: :class:`~numpy.ndarray`
-        A xXy array populated with integers 0, ..., s-1 that indicate the area of each pixel
+        A xXy array populated with integers 0, ..., s-1 that indicate the area of each pixel.
+        Non covered pixels, if any, are represented by s.
     centers: :class:`~numpy.ndarray`
         Coordinates of the area centers
     """
