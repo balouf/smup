@@ -117,7 +117,7 @@ def ascii_display(picture, centers):
 
 
 @njit
-def compute(x, y, s, distance_function, seed=None):
+def compute(x, y, s, distance_function, provisioning=1.0, heterogeneous_areas=False, seed=None):
     """
     Main function of the package. Computes the pictures.
 
@@ -131,6 +131,10 @@ def compute(x, y, s, distance_function, seed=None):
         Number of areas to display in the picture
     distance_function: callable
         Functions that computes distances between a center and points
+    provisioning: :class:`float`
+        Quota under/over provisioning. Values < 1 will make holes in the covering, while large values will make a Delaunay partition.
+    heterogeneous_areas: :class:`bool`
+        Tells if the surfaces of site try to have same area or not.
     seed: :py:class:`int`, optional
         Random seed
 
@@ -142,8 +146,8 @@ def compute(x, y, s, distance_function, seed=None):
         Coordinates of the area centers
     """
     xy = x * y
-    # pixel quota for each area
-    bb = round(xy / s)
+    # total pixel quota
+    total_b = round(xy * provisioning)
     # Draw s centers
     if seed is not None:
         np.random.seed(seed)
@@ -163,7 +167,12 @@ def compute(x, y, s, distance_function, seed=None):
     # Sort the indexes by increasing distance
     edges = np.argsort(dist)
     # Prepare main loop
-    quotas = bb * np.ones(s, dtype=np.int32)
+    if heterogeneous_areas:
+        quotas = [0]+sorted([np.random.randint(total_b) for _ in range(s-1)])+[total_b]
+        quotas = np.array([quotas[i+1]-quotas[i] for i in range(s)])
+    else:
+        bb = round(total_b / s)
+        quotas = bb * np.ones(s, dtype=np.int32)
     results = s * np.ones((y, x), dtype=np.int32)
     pixels = xy
     # Main allocation loop
@@ -199,7 +208,7 @@ class Smup:
         self.picture = None
         self.centers = None
 
-    def compute(self, x=1024, y=720, s=20, norm=2, seed=None):
+    def compute(self, x=1024, y=720, s=20, norm=2, provisioning=1.0, heterogeneous_areas=False, seed=None):
         """
         Parameters
         ----------
@@ -211,6 +220,10 @@ class Smup:
             Number of areas to display in the picture
         norm: :py:class:`int` or :py:class:`str`
             Distance to use. Can be 1, 2, or 'inf'
+        provisioning: :class:`float`
+            Quotas slack. Values < 1 will make holes in the covering, while large values will make a Delaunay partition.
+        heterogeneous_areas: :class:`bool`
+            Tells if the surfaces of site try to have same area or not.
         seed: :py:class:`int`, optional
             Random seed
 
@@ -327,6 +340,84 @@ class Smup:
         1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 1 1 1 1 1
         1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 1 1 1 1 1
         1 1 1 1 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 2 2 2 2 2 1 1 1 1 1 1
+
+        Heterogeneous areas make site quotas uneven.
+
+        >>> my_smup.compute(x=30, y=20, s=3, heterogeneous_areas=True, seed=42)
+        >>> txt = ascii_display(my_smup.picture, my_smup.centers)
+        >>> print(txt)
+        1 1 1 1 1 1 2 2 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        1 1 1 1 1 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        1 1 1 1 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        1 1 1 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 X 2 2 2 1 1 1 X 1
+        1 1 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 X 0 0 0 0 0 0 0 0 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 1 1 1 1 1
+        1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 1 1 1 1 1
+        1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1
+        1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 1 1 1 1 1 1 1
+
+        Underprovisioned quotas will create *holes*.
+
+        >>> my_smup.compute(x=30, y=20, s=3, provisioning=.4, seed=42)
+        >>> txt = ascii_display(my_smup.picture, my_smup.centers)
+        >>> print(txt)
+        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 X 2 2 2 1 1 1 X 1
+        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        3 3 3 3 3 3 3 3 3 0 0 0 0 3 3 3 3 2 2 2 2 2 2 2 2 1 1 1 1 1
+        3 3 3 3 3 3 3 3 0 0 0 0 0 0 0 3 3 3 2 2 2 2 2 2 2 1 1 1 1 1
+        3 3 3 3 3 3 3 0 0 0 0 0 0 0 0 0 3 3 3 3 1 2 2 1 1 1 1 1 1 1
+        3 3 3 3 3 3 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 1 1 1 1 1 1 1 1 1
+        3 3 3 3 3 3 0 0 0 0 0 X 0 0 0 0 3 3 3 3 3 3 1 1 1 1 1 1 1 1
+        3 3 3 3 3 3 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 1 1 1 1 1 1
+        3 3 3 3 3 3 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 1 1 1 1
+        3 3 3 3 3 3 3 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+        3 3 3 3 3 3 3 3 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+        3 3 3 3 3 3 3 3 3 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+
+        Overprovisioned quotas will create a Delaunay partition.
+
+        >>> my_smup.compute(x=30, y=20, s=3, provisioning=4, seed=42)
+        >>> txt = ascii_display(my_smup.picture, my_smup.centers)
+        >>> print(txt)
+        0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 X 2 2 2 1 1 1 X 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 X 0 0 0 0 0 0 0 0 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1
         """
         self.s = s
         if str(norm) == 'inf':
@@ -338,9 +429,9 @@ class Smup:
         else:
             logging.warning(f"Norm {norm} unknown, defaulting to 2-norm.")
             dist = dist_2
-        self.picture, self.centers = compute(x, y, s, dist, seed)
+        self.picture, self.centers = compute(x, y, s, dist, provisioning, heterogeneous_areas, seed)
 
-    def display(self, cmap='jet', draw_centers=True, center_size=20, save=None):
+    def display(self, cmap='jet', draw_centers=False, center_size=20, save=None):
         """
 
         Parameters
@@ -348,7 +439,7 @@ class Smup:
         cmap: :class:`str`
             Matplotlib colormap to use. Defaults to 'jet'
         draw_centers: :class:`bool`
-            Draw centers of areas. Defaults to True.
+            Draw centers of areas. Defaults to False.
         center_size: :class:`int`
             Size of centers, if drawn. Defaults to 20.
         save: :class:`str` ot :class:`~pathlib.Path`, optional
@@ -369,7 +460,7 @@ class Smup:
         >>> my_smup.compute(x=30, y=20, s=3, norm=2, seed=42)
         >>> with tempfile.TemporaryDirectory() as tmpdirname:
         ...     fn = tmpdirname/Path("picture.png")
-        ...     my_smup.display(save=fn)
+        ...     my_smup.display(draw_centers=True, save=fn)
         ...     size=fn.stat().st_size
         >>> size
         55984

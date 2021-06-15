@@ -289,7 +289,7 @@
 
 
 <div class="viewcode-block" id="compute"><a class="viewcode-back" href="../../reference/index.html#smup.smup.compute">[docs]</a><span class="nd">@njit</span>
-<span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">distance_function</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">distance_function</span><span class="p">,</span> <span class="n">provisioning</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">heterogeneous_areas</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Main function of the package. Computes the pictures.</span>
 
@@ -303,6 +303,10 @@
 <span class="sd">        Number of areas to display in the picture</span>
 <span class="sd">    distance_function: callable</span>
 <span class="sd">        Functions that computes distances between a center and points</span>
+<span class="sd">    provisioning: :class:`float`</span>
+<span class="sd">        Quota under/over provisioning. Values &lt; 1 will make holes in the covering, while large values will make a Delaunay partition.</span>
+<span class="sd">    heterogeneous_areas: :class:`bool`</span>
+<span class="sd">        Tells if the surfaces of site try to have same area or not.</span>
 <span class="sd">    seed: :py:class:`int`, optional</span>
 <span class="sd">        Random seed</span>
 
@@ -314,8 +318,8 @@
 <span class="sd">        Coordinates of the area centers</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">xy</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
-    <span class="c1"># pixel quota for each area</span>
-    <span class="n">bb</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">xy</span> <span class="o">/</span> <span class="n">s</span><span class="p">)</span>
+    <span class="c1"># total pixel quota</span>
+    <span class="n">total_b</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">xy</span> <span class="o">*</span> <span class="n">provisioning</span><span class="p">)</span>
     <span class="c1"># Draw s centers</span>
     <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
@@ -335,7 +339,12 @@
     <span class="c1"># Sort the indexes by increasing distance</span>
     <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
     <span class="c1"># Prepare main loop</span>
-    <span class="n">quotas</span> <span class="o">=</span> <span class="n">bb</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">heterogeneous_areas</span><span class="p">:</span>
+        <span class="n">quotas</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="nb">sorted</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">total_b</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">s</span><span class="o">-</span><span class="mi">1</span><span class="p">)])</span><span class="o">+</span><span class="p">[</span><span class="n">total_b</span><span class="p">]</span>
+        <span class="n">quotas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">quotas</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">quotas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">s</span><span class="p">)])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">bb</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">total_b</span> <span class="o">/</span> <span class="n">s</span><span class="p">)</span>
+        <span class="n">quotas</span> <span class="o">=</span> <span class="n">bb</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
     <span class="n">results</span> <span class="o">=</span> <span class="n">s</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
     <span class="n">pixels</span> <span class="o">=</span> <span class="n">xy</span>
     <span class="c1"># Main allocation loop</span>
@@ -371,7 +380,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">picture</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">centers</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="Smup.compute"><a class="viewcode-back" href="../../reference/index.html#smup.smup.Smup.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">720</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Smup.compute"><a class="viewcode-back" href="../../reference/index.html#smup.smup.Smup.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">720</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">provisioning</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">heterogeneous_areas</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -383,6 +392,10 @@
 <span class="sd">            Number of areas to display in the picture</span>
 <span class="sd">        norm: :py:class:`int` or :py:class:`str`</span>
 <span class="sd">            Distance to use. Can be 1, 2, or &#39;inf&#39;</span>
+<span class="sd">        provisioning: :class:`float`</span>
+<span class="sd">            Quotas slack. Values &lt; 1 will make holes in the covering, while large values will make a Delaunay partition.</span>
+<span class="sd">        heterogeneous_areas: :class:`bool`</span>
+<span class="sd">            Tells if the surfaces of site try to have same area or not.</span>
 <span class="sd">        seed: :py:class:`int`, optional</span>
 <span class="sd">            Random seed</span>
 
@@ -499,6 +512,84 @@
 <span class="sd">        1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
 <span class="sd">        1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
 <span class="sd">        1 1 1 1 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 2 2 2 2 2 1 1 1 1 1 1</span>
+
+<span class="sd">        Heterogeneous areas make site quotas uneven.</span>
+
+<span class="sd">        &gt;&gt;&gt; my_smup.compute(x=30, y=20, s=3, heterogeneous_areas=True, seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; txt = ascii_display(my_smup.picture, my_smup.centers)</span>
+<span class="sd">        &gt;&gt;&gt; print(txt)</span>
+<span class="sd">        1 1 1 1 1 1 2 2 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 1 1 1 1 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 1 1 1 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 1 1 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 X 2 2 2 1 1 1 X 1</span>
+<span class="sd">        1 1 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 X 0 0 0 0 0 0 0 0 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 1 1 1 1 1 1 1</span>
+
+<span class="sd">        Underprovisioned quotas will create *holes*.</span>
+
+<span class="sd">        &gt;&gt;&gt; my_smup.compute(x=30, y=20, s=3, provisioning=.4, seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; txt = ascii_display(my_smup.picture, my_smup.centers)</span>
+<span class="sd">        &gt;&gt;&gt; print(txt)</span>
+<span class="sd">        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 X 2 2 2 1 1 1 X 1</span>
+<span class="sd">        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        3 3 3 3 3 3 3 3 3 0 0 0 0 3 3 3 3 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        3 3 3 3 3 3 3 3 0 0 0 0 0 0 0 3 3 3 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        3 3 3 3 3 3 3 0 0 0 0 0 0 0 0 0 3 3 3 3 1 2 2 1 1 1 1 1 1 1</span>
+<span class="sd">        3 3 3 3 3 3 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 1 1 1 1 1 1 1 1 1</span>
+<span class="sd">        3 3 3 3 3 3 0 0 0 0 0 X 0 0 0 0 3 3 3 3 3 3 1 1 1 1 1 1 1 1</span>
+<span class="sd">        3 3 3 3 3 3 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 1 1 1 1 1 1</span>
+<span class="sd">        3 3 3 3 3 3 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 1 1 1 1</span>
+<span class="sd">        3 3 3 3 3 3 3 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3</span>
+<span class="sd">        3 3 3 3 3 3 3 3 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3</span>
+<span class="sd">        3 3 3 3 3 3 3 3 3 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3</span>
+<span class="sd">        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3</span>
+<span class="sd">        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3</span>
+<span class="sd">        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3</span>
+
+<span class="sd">        Overprovisioned quotas will create a Delaunay partition.</span>
+
+<span class="sd">        &gt;&gt;&gt; my_smup.compute(x=30, y=20, s=3, provisioning=4, seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; txt = ascii_display(my_smup.picture, my_smup.centers)</span>
+<span class="sd">        &gt;&gt;&gt; print(txt)</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 X 2 2 2 1 1 1 X 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 X 0 0 0 0 0 0 0 0 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">s</span>
         <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">norm</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;inf&#39;</span><span class="p">:</span>
@@ -510,9 +601,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Norm </span><span class="si">{</span><span class="n">norm</span><span class="si">}</span><span class="s2"> unknown, defaulting to 2-norm.&quot;</span><span class="p">)</span>
             <span class="n">dist</span> <span class="o">=</span> <span class="n">dist_2</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">picture</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">centers</span> <span class="o">=</span> <span class="n">compute</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">picture</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">centers</span> <span class="o">=</span> <span class="n">compute</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">provisioning</span><span class="p">,</span> <span class="n">heterogeneous_areas</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Smup.display"><a class="viewcode-back" href="../../reference/index.html#smup.smup.Smup.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;jet&#39;</span><span class="p">,</span> <span class="n">draw_centers</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">center_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Smup.display"><a class="viewcode-back" href="../../reference/index.html#smup.smup.Smup.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;jet&#39;</span><span class="p">,</span> <span class="n">draw_centers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">center_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Parameters</span>
@@ -520,7 +611,7 @@
 <span class="sd">        cmap: :class:`str`</span>
 <span class="sd">            Matplotlib colormap to use. Defaults to &#39;jet&#39;</span>
 <span class="sd">        draw_centers: :class:`bool`</span>
-<span class="sd">            Draw centers of areas. Defaults to True.</span>
+<span class="sd">            Draw centers of areas. Defaults to False.</span>
 <span class="sd">        center_size: :class:`int`</span>
 <span class="sd">            Size of centers, if drawn. Defaults to 20.</span>
 <span class="sd">        save: :class:`str` ot :class:`~pathlib.Path`, optional</span>
@@ -541,7 +632,7 @@
 <span class="sd">        &gt;&gt;&gt; my_smup.compute(x=30, y=20, s=3, norm=2, seed=42)</span>
 <span class="sd">        &gt;&gt;&gt; with tempfile.TemporaryDirectory() as tmpdirname:</span>
 <span class="sd">        ...     fn = tmpdirname/Path(&quot;picture.png&quot;)</span>
-<span class="sd">        ...     my_smup.display(save=fn)</span>
+<span class="sd">        ...     my_smup.display(draw_centers=True, save=fn)</span>
 <span class="sd">        ...     size=fn.stat().st_size</span>
 <span class="sd">        &gt;&gt;&gt; size</span>
 <span class="sd">        55984</span>
