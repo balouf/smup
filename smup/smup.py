@@ -133,7 +133,8 @@ def compute(x, y, s, distance_function, provisioning=1.0, heterogeneous_areas=Fa
     distance_function: callable
         Functions that computes distances between a center and points
     provisioning: :class:`float`
-        Quota under/over provisioning. Values < 1 will make holes in the covering, while large values will make a Delaunay partition.
+        Quota under/over provisioning. Values < 1 will make holes in the covering,
+        while large values will make a Voronoi diagram.
     heterogeneous_areas: :class:`bool`
         Tells if the surfaces of site try to have same area or not.
     seed: :py:class:`int`, optional
@@ -223,7 +224,7 @@ class Smup:
         norm: :py:class:`int` or :py:class:`str`
             Distance to use. Can be 1, 2, or 'inf'
         provisioning: :class:`float`
-            Quotas slack. Values < 1 will make holes in the covering, while large values will make a Delaunay partition.
+            Quotas slack. Values < 1 will make holes in the covering, while large values will make a Voronoi diagram.
         heterogeneous_areas: :class:`bool`
             Tells if the surfaces of site try to have same area or not.
         seed: :py:class:`int`, optional
@@ -395,7 +396,7 @@ class Smup:
         3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
         3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
 
-        Overprovisioned quotas will create a Delaunay partition.
+        Overprovisioned quotas will create a Voronoi diagram.
 
         >>> my_smup.compute(x=30, y=20, s=3, provisioning=4, seed=42)
         >>> txt = ascii_display(my_smup.picture, my_smup.centers)
