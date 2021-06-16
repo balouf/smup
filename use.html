@@ -591,7 +591,7 @@ div.rendered_html tbody tr:hover {
 <img alt="_images/use_15_0.png" src="_images/use_15_0.png" />
 </div>
 </div>
-<p>On the other hand, overprovisioning will allow to reach Delaunay partition.</p>
+<p>On the other hand, overprovisioning will allow to reach the Voronoi diagram. Because yep, you can see a Voronoi diagram as a special case of stable-matching!</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
@@ -842,8 +842,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="section" id="Theory">
 <h2>Theory<a class="headerlink" href="#Theory" title="Permalink to this headline">¶</a></h2>
-<p>A smup is just a <span class="math notranslate nohighlight">\(b\)</span>-matching between a set of centers drawn randomly at random and the pixels of the picture, with distances used as preferences. Funny thing with distance-based preferences is that they tend to follow a power-law distribution, which means that while most of the pixels will be attached close to their center, some pixels are exiled far away, possibly to the other end of the picture. Another funny thing is that if you run the propose/dispose algorithm by increasing distance,
-there is no rejection after acceptance, which allows to fasten the algorithm a bit.</p>
+<p>A smup is just a <span class="math notranslate nohighlight">\(b\)</span>-matching between a set of centers drawn at random and the pixels of the picture, with distances used as preferences. Funny thing with distance-based preferences is that they tend to follow a power-law distribution, which means that while most of the pixels will be attached close to their center, some pixels are exiled far away, possibly to the other end of the picture. Another funny thing is that if you run the propose/dispose algorithm by increasing distance, there is
+no rejection after acceptance, which allows to speed up the algorithm a bit.</p>
 <p>The paragraph above doesn’t mean anything to you? Don’t panic, here are a few pointers:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://www.eecs.harvard.edu/cs286r/courses/fall09/papers/galeshapley.pdf">College Admissions and the Stability of Marriage</a>, the original article on stable matchings.</p></li>

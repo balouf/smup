@@ -266,7 +266,8 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    picture: :class:`~numpy.ndarray`</span>
-<span class="sd">        A xXy array populated with s distinct floats in [0, 1] that hints the area of each pixel</span>
+<span class="sd">        A xXy array populated with integers 0, ..., s-1 that indicate the area of each pixel.</span>
+<span class="sd">        Non covered pixels, if any, are represented by s.</span>
 <span class="sd">    centers: :class:`~numpy.ndarray`</span>
 <span class="sd">        Coordinates of the area centers</span>
 
@@ -304,7 +305,8 @@
 <span class="sd">    distance_function: callable</span>
 <span class="sd">        Functions that computes distances between a center and points</span>
 <span class="sd">    provisioning: :class:`float`</span>
-<span class="sd">        Quota under/over provisioning. Values &lt; 1 will make holes in the covering, while large values will make a Delaunay partition.</span>
+<span class="sd">        Quota under/over provisioning. Values &lt; 1 will make holes in the covering,</span>
+<span class="sd">        while large values will make a Voronoi diagram.</span>
 <span class="sd">    heterogeneous_areas: :class:`bool`</span>
 <span class="sd">        Tells if the surfaces of site try to have same area or not.</span>
 <span class="sd">    seed: :py:class:`int`, optional</span>
@@ -313,7 +315,8 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    picture: :class:`~numpy.ndarray`</span>
-<span class="sd">        A xXy array populated with integers 0, ..., s-1 that indicate the area of each pixel</span>
+<span class="sd">        A xXy array populated with integers 0, ..., s-1 that indicate the area of each pixel.</span>
+<span class="sd">        Non covered pixels, if any, are represented by s.</span>
 <span class="sd">    centers: :class:`~numpy.ndarray`</span>
 <span class="sd">        Coordinates of the area centers</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -393,7 +396,7 @@
 <span class="sd">        norm: :py:class:`int` or :py:class:`str`</span>
 <span class="sd">            Distance to use. Can be 1, 2, or &#39;inf&#39;</span>
 <span class="sd">        provisioning: :class:`float`</span>
-<span class="sd">            Quotas slack. Values &lt; 1 will make holes in the covering, while large values will make a Delaunay partition.</span>
+<span class="sd">            Quotas slack. Values &lt; 1 will make holes in the covering, while large values will make a Voronoi diagram.</span>
 <span class="sd">        heterogeneous_areas: :class:`bool`</span>
 <span class="sd">            Tells if the surfaces of site try to have same area or not.</span>
 <span class="sd">        seed: :py:class:`int`, optional</span>
@@ -565,7 +568,7 @@
 <span class="sd">        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3</span>
 <span class="sd">        3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3</span>
 
-<span class="sd">        Overprovisioned quotas will create a Delaunay partition.</span>
+<span class="sd">        Overprovisioned quotas will create a Voronoi diagram.</span>
 
 <span class="sd">        &gt;&gt;&gt; my_smup.compute(x=30, y=20, s=3, provisioning=4, seed=42)</span>
 <span class="sd">        &gt;&gt;&gt; txt = ascii_display(my_smup.picture, my_smup.centers)</span>
