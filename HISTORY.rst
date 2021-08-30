@@ -3,6 +3,13 @@ History
 =======
 
 ------------------------------------
+0.2.1 (2021-08-30): Few new features
+------------------------------------
+
+* Possibility to enter an arbitrary Hölder norm (even illegal one).
+* Few corrections and precisions in the documentation.
+
+------------------------------------
 0.2.0 (2021-06-15): Few new features
 ------------------------------------
 
