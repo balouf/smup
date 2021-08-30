@@ -5,6 +5,36 @@ import logging
 from pathlib import Path
 
 
+def isfloat(value):
+    """
+    Parameters
+    ----------
+    value: :class:`object`
+
+    Returns
+    -------
+    :class:`bool`
+        Can the object be converted to float?
+
+    Examples
+    --------
+
+    >>> isfloat(3)
+    True
+    >>> isfloat("3.145")
+    True
+    >>> isfloat("Hello")
+    False
+    >>> isfloat("1+1")
+    False
+    """
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
+
+
 @njit
 def dist_2(center, points):
     """
@@ -31,6 +61,57 @@ def dist_2(center, points):
     array([0.25, 1.  , 5.  ])
     """
     return (points[0, :] - center[0]) ** 2 + (points[1, :] - center[1]) ** 2
+
+
+def make_dist_p(p=2.0):
+    """
+    Parameters
+    ----------
+        p: :class:`float`
+            Power to apply.
+
+    Returns
+    -------
+    callable
+        A jitted function that computes the sum of individual coordinate distances to the power of p.
+        Correspond to a norm (up to re-scaling by 1/p) if p greater or equal to 1.
+
+    Examples
+    --------
+
+    Let us fix a center and some points.
+
+    >>> center = np.array([0, 0])
+    >>> points = np.array([ [0.3, 1, 2], [0.4, 0, 1] ])
+
+    Square distances between the origin and the points (0.3, 0.4), (1, 0), and (2, 1)
+    (equivalent to :meth:`~smup.smup.dist_2`)
+
+    >>> my_dist = make_dist_p(p=2)
+    >>> my_dist(center, points)
+    array([0.25, 1.  , 5.  ])
+
+    Power of 1 (equivalent to :meth:`~smup.smup.dist_1`):
+
+    >>> my_dist = make_dist_p(p=1)
+    >>> my_dist(center, points)
+    array([0.7, 1. , 3. ])
+
+    Power of 3:
+
+    >>> my_dist = make_dist_p(p=3)
+    >>> my_dist(center, points)
+    array([0.091, 1.   , 9.   ])
+
+    Power of .5 (not a norm; convexity is lost):
+
+    >>> my_dist = make_dist_p(p=.5)
+    >>> my_dist(center, points)
+    array([1.18017809, 1.        , 2.41421356])
+    """
+    def dist_p(center, points):
+        return np.abs(points[0, :] - center[0]) ** p + np.abs(points[1, :] - center[1]) ** p
+    return njit(dist_p)
 
 
 @njit
@@ -221,12 +302,16 @@ class Smup:
             Height of the picture (in pixels)
         s: :py:class:`int`
             Number of areas to display in the picture
-        norm: :py:class:`int` or :py:class:`str`
-            Distance to use. Can be 1, 2, or 'inf'
+        norm: :py:class:`int` or :py:class:`str` or :py:class:`float`
+            Distance to use. Optimized for 1, 2, or 'inf' but arbitrary positive float can be used
+            (only values greater or equal to one correspond to actual norms).
         provisioning: :class:`float`
             Quotas slack. Values < 1 will make holes in the covering, while large values will make a Voronoi diagram.
         heterogeneous_areas: :class:`bool`
             Tells if the surfaces of site try to have same area or not.
+            If False, each area will have the same size up to roundings (about x*y/s).
+            If True, (s-1) integers between 0 and x*y are draw uniformly independently. The sizes are given by the s
+            intervals generated on [0, x*y].
         seed: :py:class:`int`, optional
             Random seed
 
@@ -317,6 +402,32 @@ class Smup:
         1 2 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1
         1 2 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1
         1 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+
+        Arbitrary power can be used for the norm (which may not be a norm in the end).
+
+        >>> my_smup.compute(x=30, y=20, s=3, norm=.5, seed=42)
+        >>> txt = ascii_display(my_smup.picture, my_smup.centers)
+        >>> print(txt) # doctest: +SKIP
+        1 1 1 1 1 1 2 2 2 2 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        1 1 1 2 2 2 2 2 2 2 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        2 2 2 2 2 2 2 2 2 2 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        2 2 2 2 2 2 2 2 2 2 0 0 2 2 2 2 2 2 2 2 2 X 2 2 2 1 1 1 X 1
+        1 1 2 2 2 2 2 2 2 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        1 1 1 1 1 2 2 2 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 1 1 1 1 1
+        1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 1 1 1 1 1
+        1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 1 1 1 1 1
+        1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 X 0 0 0 0 0 0 0 0 0 2 2 2 0 1 1 1 1 1
+        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 0 2 1 1 1 1 1
+        1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1
+        1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 1 1 1 1 1
+        1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 1 2 2 2 2 2 2 2 1 1 1 1 1
+        1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 1 1 2 2 2 2 2 2 2 1 1 1 1 1
+        1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 1 1 1 1 2 2 2 2 2 2 1 1 1 1 1
+        1 1 1 1 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 2 2 2 2 2 2 1 1 1 1 1
+        1 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1 1 1 1 2 2 2 2 1 1 1 1 1 1
 
         Unclear norm defaults to Euclidian norm (and a warning is issued).
 
@@ -429,6 +540,8 @@ class Smup:
             dist = dist_1
         elif str(norm) == '2':
             dist = dist_2
+        elif isfloat(norm):
+            dist = make_dist_p(float(norm))
         else:
             logging.warning(f"Norm {norm} unknown, defaulting to 2-norm.")
             dist = dist_2

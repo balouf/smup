@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>smup.smup &mdash; Stable-Matching Useless Pictures 0.2.0 documentation</title>
+  <title>smup.smup &mdash; Stable-Matching Useless Pictures 0.2.1 documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                0.2.0
+                0.2.1
               </div>
             
           
@@ -95,7 +95,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../readme.html">Stable-Matching Useless Pictures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
@@ -177,6 +177,36 @@
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 
+<div class="viewcode-block" id="isfloat"><a class="viewcode-back" href="../../reference/index.html#smup.smup.isfloat">[docs]</a><span class="k">def</span> <span class="nf">isfloat</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    value: :class:`object`</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`bool`</span>
+<span class="sd">        Can the object be converted to float?</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    &gt;&gt;&gt; isfloat(3)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; isfloat(&quot;3.145&quot;)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; isfloat(&quot;Hello&quot;)</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; isfloat(&quot;1+1&quot;)</span>
+<span class="sd">    False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
 <div class="viewcode-block" id="dist_2"><a class="viewcode-back" href="../../reference/index.html#smup.smup.dist_2">[docs]</a><span class="nd">@njit</span>
 <span class="k">def</span> <span class="nf">dist_2</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -203,6 +233,57 @@
 <span class="sd">    array([0.25, 1.  , 5.  ])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="make_dist_p"><a class="viewcode-back" href="../../reference/index.html#smup.smup.make_dist_p">[docs]</a><span class="k">def</span> <span class="nf">make_dist_p</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">2.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        p: :class:`float`</span>
+<span class="sd">            Power to apply.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    callable</span>
+<span class="sd">        A jitted function that computes the sum of individual coordinate distances to the power of p.</span>
+<span class="sd">        Correspond to a norm (up to re-scaling by 1/p) if p greater or equal to 1.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    Let us fix a center and some points.</span>
+
+<span class="sd">    &gt;&gt;&gt; center = np.array([0, 0])</span>
+<span class="sd">    &gt;&gt;&gt; points = np.array([ [0.3, 1, 2], [0.4, 0, 1] ])</span>
+
+<span class="sd">    Square distances between the origin and the points (0.3, 0.4), (1, 0), and (2, 1)</span>
+<span class="sd">    (equivalent to :meth:`~smup.smup.dist_2`)</span>
+
+<span class="sd">    &gt;&gt;&gt; my_dist = make_dist_p(p=2)</span>
+<span class="sd">    &gt;&gt;&gt; my_dist(center, points)</span>
+<span class="sd">    array([0.25, 1.  , 5.  ])</span>
+
+<span class="sd">    Power of 1 (equivalent to :meth:`~smup.smup.dist_1`):</span>
+
+<span class="sd">    &gt;&gt;&gt; my_dist = make_dist_p(p=1)</span>
+<span class="sd">    &gt;&gt;&gt; my_dist(center, points)</span>
+<span class="sd">    array([0.7, 1. , 3. ])</span>
+
+<span class="sd">    Power of 3:</span>
+
+<span class="sd">    &gt;&gt;&gt; my_dist = make_dist_p(p=3)</span>
+<span class="sd">    &gt;&gt;&gt; my_dist(center, points)</span>
+<span class="sd">    array([0.091, 1.   , 9.   ])</span>
+
+<span class="sd">    Power of .5 (not a norm; convexity is lost):</span>
+
+<span class="sd">    &gt;&gt;&gt; my_dist = make_dist_p(p=.5)</span>
+<span class="sd">    &gt;&gt;&gt; my_dist(center, points)</span>
+<span class="sd">    array([1.18017809, 1.        , 2.41421356])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">dist_p</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="n">p</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">**</span> <span class="n">p</span>
+    <span class="k">return</span> <span class="n">njit</span><span class="p">(</span><span class="n">dist_p</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="dist_1"><a class="viewcode-back" href="../../reference/index.html#smup.smup.dist_1">[docs]</a><span class="nd">@njit</span>
@@ -393,12 +474,16 @@
 <span class="sd">            Height of the picture (in pixels)</span>
 <span class="sd">        s: :py:class:`int`</span>
 <span class="sd">            Number of areas to display in the picture</span>
-<span class="sd">        norm: :py:class:`int` or :py:class:`str`</span>
-<span class="sd">            Distance to use. Can be 1, 2, or &#39;inf&#39;</span>
+<span class="sd">        norm: :py:class:`int` or :py:class:`str` or :py:class:`float`</span>
+<span class="sd">            Distance to use. Optimized for 1, 2, or &#39;inf&#39; but arbitrary positive float can be used</span>
+<span class="sd">            (only values greater or equal to one correspond to actual norms).</span>
 <span class="sd">        provisioning: :class:`float`</span>
 <span class="sd">            Quotas slack. Values &lt; 1 will make holes in the covering, while large values will make a Voronoi diagram.</span>
 <span class="sd">        heterogeneous_areas: :class:`bool`</span>
 <span class="sd">            Tells if the surfaces of site try to have same area or not.</span>
+<span class="sd">            If False, each area will have the same size up to roundings (about x*y/s).</span>
+<span class="sd">            If True, (s-1) integers between 0 and x*y are draw uniformly independently. The sizes are given by the s</span>
+<span class="sd">            intervals generated on [0, x*y].</span>
 <span class="sd">        seed: :py:class:`int`, optional</span>
 <span class="sd">            Random seed</span>
 
@@ -489,6 +574,32 @@
 <span class="sd">        1 2 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1</span>
 <span class="sd">        1 2 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1</span>
 <span class="sd">        1 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</span>
+
+<span class="sd">        Arbitrary power can be used for the norm (which may not be a norm in the end).</span>
+
+<span class="sd">        &gt;&gt;&gt; my_smup.compute(x=30, y=20, s=3, norm=.5, seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; txt = ascii_display(my_smup.picture, my_smup.centers)</span>
+<span class="sd">        &gt;&gt;&gt; print(txt) # doctest: +SKIP</span>
+<span class="sd">        1 1 1 1 1 1 2 2 2 2 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 1 1 2 2 2 2 2 2 2 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        2 2 2 2 2 2 2 2 2 2 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        2 2 2 2 2 2 2 2 2 2 0 0 2 2 2 2 2 2 2 2 2 X 2 2 2 1 1 1 X 1</span>
+<span class="sd">        1 1 2 2 2 2 2 2 2 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 1 1 1 1 2 2 2 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 X 0 0 0 0 0 0 0 0 0 2 2 2 0 1 1 1 1 1</span>
+<span class="sd">        0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 0 2 1 1 1 1 1</span>
+<span class="sd">        1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 1 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 1 1 2 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 1 1 1 1 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 1 1 1 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 2 2 2 2 2 2 1 1 1 1 1</span>
+<span class="sd">        1 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1 1 1 1 2 2 2 2 1 1 1 1 1 1</span>
 
 <span class="sd">        Unclear norm defaults to Euclidian norm (and a warning is issued).</span>
 
@@ -601,6 +712,8 @@
             <span class="n">dist</span> <span class="o">=</span> <span class="n">dist_1</span>
         <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">norm</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;2&#39;</span><span class="p">:</span>
             <span class="n">dist</span> <span class="o">=</span> <span class="n">dist_2</span>
+        <span class="k">elif</span> <span class="n">isfloat</span><span class="p">(</span><span class="n">norm</span><span class="p">):</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">make_dist_p</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">norm</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Norm </span><span class="si">{</span><span class="n">norm</span><span class="si">}</span><span class="s2"> unknown, defaulting to 2-norm.&quot;</span><span class="p">)</span>
             <span class="n">dist</span> <span class="o">=</span> <span class="n">dist_2</span>
