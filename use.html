@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Using SMUP &mdash; Stable-Matching Useless Pictures 0.2.1 documentation</title>
+  <title>Using SMUP &mdash; Stable-Matching Useless Pictures 0.2.2 documentation</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                0.2.1
+                0.2.2
               </div>
             
           
@@ -105,7 +105,11 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Using SMUP</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Computational-parameters">Computational parameters</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#Norm">Norm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Distance-functions">Distance functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Norms">Norms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Arbitrary-functions">Arbitrary functions</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#Provisioning">Provisioning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Heterogeneous-areas">Heterogeneous areas</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Size">Size</a></li>
@@ -493,12 +497,14 @@ div.rendered_html tbody tr:hover {
 <h2>Computational parameters<a class="headerlink" href="#Computational-parameters" title="Permalink to this headline">¶</a></h2>
 <p>For computing, you can adjust:</p>
 <ul class="simple">
-<li><p>the distance used;</p></li>
+<li><p>the distance function used;</p></li>
 <li><p>the size of the picture;</p></li>
 <li><p>the number of sites.</p></li>
 </ul>
-<div class="section" id="Norm">
-<h3>Norm<a class="headerlink" href="#Norm" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="Distance-functions">
+<h3>Distance functions<a class="headerlink" href="#Distance-functions" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="Norms">
+<h4>Norms<a class="headerlink" href="#Norms" title="Permalink to this headline">¶</a></h4>
 <p>By default, the smup will use the Euclidian distance (norm 2), which will shape the sites as (partial) circles. Note the use of a random seed in the code below, which will allows to fix the location of the sites and see the effect of the norm.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -514,7 +520,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_7_0.png" src="_images/use_7_0.png" />
+<img alt="_images/use_8_0.png" src="_images/use_8_0.png" />
 </div>
 </div>
 <p>The Manhattan distance (norm 1) will shape the sites as (partial) diamonds. Note the use of a random seed in the code below, which will allows to fix the location of the sites and see the effect of the norm.</p>
@@ -532,7 +538,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_9_0.png" src="_images/use_9_0.png" />
+<img alt="_images/use_10_0.png" src="_images/use_10_0.png" />
 </div>
 </div>
 <p>The infinite norm will shape the sites as (partial) squares. Note the use of a random seed in the code below, which will allows to fix the location of the sites and see the effect of the norm.</p>
@@ -550,7 +556,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_11_0.png" src="_images/use_11_0.png" />
+<img alt="_images/use_12_0.png" src="_images/use_12_0.png" />
 </div>
 </div>
 <p>You can also an arbitrary float for the norm (corresponds to Hölder’s p-norm). 3-norm:</p>
@@ -568,7 +574,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_13_0.png" src="_images/use_13_0.png" />
+<img alt="_images/use_14_0.png" src="_images/use_14_0.png" />
 </div>
 </div>
 <p>1.5 norm:</p>
@@ -586,10 +592,13 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_15_0.png" src="_images/use_15_0.png" />
+<img alt="_images/use_16_0.png" src="_images/use_16_0.png" />
 </div>
 </div>
-<p>You can even enter values smaller than 1. They do not correspond to an actual norm (no convexity) and as a result the pictures are even more chaotic.</p>
+</div>
+<div class="section" id="Arbitrary-functions">
+<h4>Arbitrary functions<a class="headerlink" href="#Arbitrary-functions" title="Permalink to this headline">¶</a></h4>
+<p>If you use a value smaller than 1, the result do not correspond to an actual norm (no convexity) and the pictures are even more chaotic.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
@@ -604,7 +613,50 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_17_0.png" src="_images/use_17_0.png" />
+<img alt="_images/use_19_0.png" src="_images/use_19_0.png" />
+</div>
+</div>
+<p>If you want to go further into that direction, you can input an arbitrary <em>distance</em> function, which may not be a distance at all! See the couple of examples below:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="k">def</span> <span class="nf">log_weight</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+<span class="n">smup</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">log_weight</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">smup</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/use_21_0.png" src="_images/use_21_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">cubic</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">3</span> <span class="o">+</span> <span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">3</span>
+
+<span class="n">smup</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">cubic</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">smup</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/use_22_0.png" src="_images/use_22_0.png" />
+</div>
 </div>
 </div>
 </div>
@@ -612,7 +664,7 @@ div.rendered_html tbody tr:hover {
 <h3>Provisioning<a class="headerlink" href="#Provisioning" title="Permalink to this headline">¶</a></h3>
 <p>Provisioning tells how much of the required pixels the sites can handles. Underprovisioning will create holes in the partition as the sites shrink down to balls centered around the centers.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -625,11 +677,11 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_20_0.png" src="_images/use_20_0.png" />
+<img alt="_images/use_25_0.png" src="_images/use_25_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -642,12 +694,12 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_21_0.png" src="_images/use_21_0.png" />
+<img alt="_images/use_26_0.png" src="_images/use_26_0.png" />
 </div>
 </div>
 <p>On the other hand, overprovisioning will allow to reach the Voronoi diagram. Because yep, you can see a Voronoi diagram as a special case of stable-matching!</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -660,11 +712,11 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_23_0.png" src="_images/use_23_0.png" />
+<img alt="_images/use_28_0.png" src="_images/use_28_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -677,7 +729,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_24_0.png" src="_images/use_24_0.png" />
+<img alt="_images/use_29_0.png" src="_images/use_29_0.png" />
 </div>
 </div>
 </div>
@@ -685,7 +737,7 @@ div.rendered_html tbody tr:hover {
 <h3>Heterogeneous areas<a class="headerlink" href="#Heterogeneous-areas" title="Permalink to this headline">¶</a></h3>
 <p>Instead of having the same area for all sites, diversity can be enabled.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -698,11 +750,11 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_27_0.png" src="_images/use_27_0.png" />
+<img alt="_images/use_32_0.png" src="_images/use_32_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -715,7 +767,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_28_0.png" src="_images/use_28_0.png" />
+<img alt="_images/use_33_0.png" src="_images/use_33_0.png" />
 </div>
 </div>
 </div>
@@ -723,7 +775,7 @@ div.rendered_html tbody tr:hover {
 <h3>Size<a class="headerlink" href="#Size" title="Permalink to this headline">¶</a></h3>
 <p>With <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> you can change the size of the picture. Note that the computational time is <span class="math notranslate nohighlight">\(\tilde{O}(xys)\)</span> and the memory occupation is <span class="math notranslate nohighlight">\(O(xys)\)</span>. The following draws a fast rough version of the picture above.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -736,12 +788,12 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_31_0.png" src="_images/use_31_0.png" />
+<img alt="_images/use_36_0.png" src="_images/use_36_0.png" />
 </div>
 </div>
 <p>You can use <code class="docutils literal notranslate"><span class="pre">x</span></code> or <code class="docutils literal notranslate"><span class="pre">y</span></code> to change the aspect ratio, for example if you want to produce a banner.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -754,7 +806,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_33_0.png" src="_images/use_33_0.png" />
+<img alt="_images/use_38_0.png" src="_images/use_38_0.png" />
 </div>
 </div>
 </div>
@@ -762,7 +814,7 @@ div.rendered_html tbody tr:hover {
 <h3>Number of areas<a class="headerlink" href="#Number-of-areas" title="Permalink to this headline">¶</a></h3>
 <p>Less sites will give you a simple smup.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -775,12 +827,12 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_36_0.png" src="_images/use_36_0.png" />
+<img alt="_images/use_41_0.png" src="_images/use_41_0.png" />
 </div>
 </div>
 <p>More sites will produce a richer smup. Beware of time and space complexities that grow with <code class="docutils literal notranslate"><span class="pre">s</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -793,7 +845,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_38_0.png" src="_images/use_38_0.png" />
+<img alt="_images/use_43_0.png" src="_images/use_43_0.png" />
 </div>
 </div>
 </div>
@@ -804,7 +856,7 @@ div.rendered_html tbody tr:hover {
 <h3>Colormap<a class="headerlink" href="#Colormap" title="Permalink to this headline">¶</a></h3>
 <p>You can use any Matplotlib maps to change the colors of your smup. See the list here: <a class="reference external" href="https://matplotlib.org/stable/tutorials/colors/colormaps.html">https://matplotlib.org/stable/tutorials/colors/colormaps.html</a></p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -816,11 +868,11 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_42_0.png" src="_images/use_42_0.png" />
+<img alt="_images/use_47_0.png" src="_images/use_47_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -832,11 +884,11 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_43_0.png" src="_images/use_43_0.png" />
+<img alt="_images/use_48_0.png" src="_images/use_48_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -848,7 +900,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_44_0.png" src="_images/use_44_0.png" />
+<img alt="_images/use_49_0.png" src="_images/use_49_0.png" />
 </div>
 </div>
 </div>
@@ -856,7 +908,7 @@ div.rendered_html tbody tr:hover {
 <h3>Centers<a class="headerlink" href="#Centers" title="Permalink to this headline">¶</a></h3>
 <p>The site centers help to understand the mechanisms of a smup. Removes a bit of the mystery, but you can show them if you want.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -868,12 +920,12 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_47_0.png" src="_images/use_47_0.png" />
+<img alt="_images/use_52_0.png" src="_images/use_52_0.png" />
 </div>
 </div>
 <p>On the other hand, if you wish to show big centers, you can!</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -885,7 +937,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/use_49_0.png" src="_images/use_49_0.png" />
+<img alt="_images/use_54_0.png" src="_images/use_54_0.png" />
 </div>
 </div>
 </div>

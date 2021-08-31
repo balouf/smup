@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Reference &mdash; Stable-Matching Useless Pictures 0.2.1 documentation</title>
+  <title>Reference &mdash; Stable-Matching Useless Pictures 0.2.2 documentation</title>
   
 
   
@@ -72,7 +72,7 @@
             
             
               <div class="version">
-                0.2.1
+                0.2.2
               </div>
             
           
@@ -219,8 +219,11 @@ and
 <li><p><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – Width of the picture (in pixels)</p></li>
 <li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – Height of the picture (in pixels)</p></li>
 <li><p><strong>s</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – Number of areas to display in the picture</p></li>
-<li><p><strong>norm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Distance to use. Optimized for 1, 2, or ‘inf’ but arbitrary positive float can be used
-(only values greater or equal to one correspond to actual norms).</p></li>
+<li><p><strong>norm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> or callable.) – Distance function to use.
+If norm is a positive float p (or string representation of), the p-norm will (which is not a norm if p&lt;1).
+Optimized for 1, 2, or ‘inf’ but arbitrary positive float can be used
+If norm is a callable (must be jittable with proper signature), it will be used as such
+(not need to be an actual norm or even distance).</p></li>
 <li><p><strong>provisioning</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Quotas slack. Values &lt; 1 will make holes in the covering, while large values will make a Voronoi diagram.</p></li>
 <li><p><strong>heterogeneous_areas</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Tells if the surfaces of site try to have same area or not.
 If False, each area will have the same size up to roundings (about x*y/s).
@@ -341,6 +344,35 @@ intervals generated on [0, x*y].</p></li>
 <span class="go">1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 1 1 1 1 2 2 2 2 2 2 1 1 1 1 1</span>
 <span class="go">1 1 1 1 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 2 2 2 2 2 2 1 1 1 1 1</span>
 <span class="go">1 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1 1 1 1 2 2 2 2 1 1 1 1 1 1</span>
+</pre></div>
+</div>
+<p>You can also specify a custom function and use it. The function, which may not be a norm of even a distance,
+must be numba compatible with a signature (2,), (2, X) -&gt; (X,). Example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">diagonal_polarization</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_smup</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">diagonal_polarization</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">txt</span> <span class="o">=</span> <span class="n">ascii_display</span><span class="p">(</span><span class="n">my_smup</span><span class="o">.</span><span class="n">picture</span><span class="p">,</span> <span class="n">my_smup</span><span class="o">.</span><span class="n">centers</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+<span class="go">2 2 2 2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1</span>
+<span class="go">2 2 2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1</span>
+<span class="go">2 2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1</span>
+<span class="go">2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 X 2 2 2 1 1 1 X 1</span>
+<span class="go">2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1</span>
+<span class="go">2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1</span>
+<span class="go">2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1</span>
+<span class="go">2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1</span>
+<span class="go">2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1</span>
+<span class="go">2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1</span>
+<span class="go">2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1</span>
+<span class="go">2 2 0 0 0 0 0 0 0 0 0 X 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1</span>
+<span class="go">2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 2</span>
+<span class="go">0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2</span>
+<span class="go">0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2</span>
+<span class="go">0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2</span>
+<span class="go">0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2</span>
+<span class="go">0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2</span>
+<span class="go">0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2</span>
+<span class="go">0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2</span>
 </pre></div>
 </div>
 <p>Unclear norm defaults to Euclidian norm (and a warning is issued).</p>
