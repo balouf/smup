@@ -2,6 +2,13 @@
 History
 =======
 
+------------------------------------------------
+0.2.2 (2021-08-31): Arbitrary distance functions
+------------------------------------------------
+
+* Add possibility to use custom *distance* function (being an actual distance, or even having non-negative outputs,
+  is NOT required).
+
 ------------------------------------
 0.2.1 (2021-08-30): Few new features
 ------------------------------------

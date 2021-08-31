@@ -31,7 +31,7 @@ def isfloat(value):
     try:
         float(value)
         return True
-    except ValueError:
+    except (ValueError, TypeError):
         return False
 
 
@@ -302,9 +302,12 @@ class Smup:
             Height of the picture (in pixels)
         s: :py:class:`int`
             Number of areas to display in the picture
-        norm: :py:class:`int` or :py:class:`str` or :py:class:`float`
-            Distance to use. Optimized for 1, 2, or 'inf' but arbitrary positive float can be used
-            (only values greater or equal to one correspond to actual norms).
+        norm: :py:class:`int` or :py:class:`str` or :py:class:`float` or callable.
+            Distance function to use.
+            If norm is a positive float p (or string representation of), the p-norm will (which is not a norm if p<1).
+            Optimized for 1, 2, or 'inf' but arbitrary positive float can be used
+            If norm is a callable (must be jittable with proper signature), it will be used as such
+            (not need to be an actual norm or even distance).
         provisioning: :class:`float`
             Quotas slack. Values < 1 will make holes in the covering, while large values will make a Voronoi diagram.
         heterogeneous_areas: :class:`bool`
@@ -429,6 +432,35 @@ class Smup:
         1 1 1 1 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 2 2 2 2 2 2 1 1 1 1 1
         1 1 1 1 1 1 1 1 1 0 0 0 0 0 1 1 1 1 1 1 2 2 2 2 1 1 1 1 1 1
 
+        You can also specify a custom function and use it. The function, which may not be a norm of even a distance,
+        must be numba compatible with a signature (2,), (2, X) -> (X,). Example:
+
+        >>> def diagonal_polarization(center, points):
+        ...     return (points[0, :] - center[0] + points[1, :] - center[1])**2
+        >>> my_smup.compute(x=30, y=20, s=3, norm=diagonal_polarization, seed=42)
+        >>> txt = ascii_display(my_smup.picture, my_smup.centers)
+        >>> print(txt)
+        2 2 2 2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1
+        2 2 2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1
+        2 2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1
+        2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 X 2 2 2 1 1 1 X 1
+        2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1
+        2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1
+        2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1
+        2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1
+        2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1
+        2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1
+        2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1
+        2 2 0 0 0 0 0 0 0 0 0 X 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1
+        2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+        0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+        0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2
+        0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2
+        0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2
+        0 0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2
+        0 0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2
+        0 0 0 0 0 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2
+
         Unclear norm defaults to Euclidian norm (and a warning is issued).
 
         >>> my_smup.compute(x=30, y=20, s=3, norm="??", seed=42)
@@ -542,6 +574,8 @@ class Smup:
             dist = dist_2
         elif isfloat(norm):
             dist = make_dist_p(float(norm))
+        elif callable(norm):
+            dist = njit(norm)
         else:
             logging.warning(f"Norm {norm} unknown, defaulting to 2-norm.")
             dist = dist_2
