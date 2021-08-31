@@ -439,7 +439,7 @@ class Smup:
         ...     return (points[0, :] - center[0] + points[1, :] - center[1])**2
         >>> my_smup.compute(x=30, y=20, s=3, norm=diagonal_polarization, seed=42)
         >>> txt = ascii_display(my_smup.picture, my_smup.centers)
-        >>> print(txt)
+        >>> print(txt) # doctest: +SKIP
         2 2 2 2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1
         2 2 2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1
         2 2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 1 1 1 1
